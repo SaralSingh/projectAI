@@ -1,0 +1,64 @@
+import re
+
+SYNONYMS = {
+    "ai": [
+        "artificial intelligence", "machine learning", "ml", "ai & ml", "artificial intelligence and machine learning",
+        "ai-ml", "ai and ml", "artificial intel", "deep learning", "neural networks", "ai engineering"
+    ],
+    "fee": [
+        "fees", "cost", "charges", "tuition", "tuition fee", "tuition fees", "fee structure", "annual fees",
+        "course fees", "total fees", "admission fees", "college fees", "btech fees", "engineering fees",
+        "hostel fees", "total cost", "per year fees", "semester fees", "affordable fees", "low fees"
+    ],
+    "btech": [
+        "b.tech", "b tech", "bachelor of technology", "bachelor in technology", "btech", "b.tech.",
+        "undergraduate engineering", "ug engineering", "bachelors in engineering", "b tech course",
+        "btech program", "b.tech degree"
+    ],
+    "cse": [
+        "computer science", "computer science engineering", "cse", "computer science & engineering",
+        "cs engineering", "computer engineering", "software engineering", "it engineering", "computer sci",
+        "cs & it", "computer science and engineering"
+    ],
+    "college": [
+        "institute", "university", "engineering college", "private college", "private engineering college",
+        "private institute", "best college", "top college", "engineering institute", "technical institute",
+        "btech college", "aknu affiliated college", "aktu college", "kanpur college", "kanpur engineering college",
+        "private university", "group of institutions", "education group", "allenhouse group", "superhouse group"
+    ],
+    "placement": [  # New category for better coverage
+        "placements", "placement record", "job placements", "campus placement", "recruitment", "job opportunities",
+        "highest package", "average package", "salary package", "placement percentage", "placement rate",
+        "top recruiters", "companies visiting", "placement cell", "training and placement", "highest salary",
+        "average salary", "placement statistics", "placement 2025", "placement 2026", "job offers"
+    ],
+    "campus": [  # For environment/facilities
+        "campus", "campus life", "infrastructure", "facilities", "environment", "hostel", "labs", "laboratories",
+        "library", "sports facilities", "gym", "canteen", "mess", "hostel facilities", "campus environment",
+        "college campus", "modern infrastructure", "smart classrooms", "college facilities"
+    ],
+    "achievement": [  # For rankings/awards
+        "achievements", "rankings", "awards", "accreditation", "naac", "iso certified", "top ranked",
+        "best engineering college", "ranking in up", "top private college", "emerging institute",
+        "hackathon wins", "student achievements", "college ranking", "nba accredited", "best in kanpur"
+    ],
+    "admission": [  # Useful for related searches
+        "admission", "admissions", "admission process", "admission open", "admission enquiry", "cutoff",
+        "eligibility", "entrance exam", "aktu admission", "btech admission", "direct admission"
+    ]
+}
+
+
+def normalize(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+
+    for key, values in SYNONYMS.items():
+        for val in values:
+            pattern = r"\b" + re.escape(val) + r"\b"
+            if re.search(pattern, text):
+                text = re.sub(pattern, key, text)
+                break   # avoid over-replacing
+
+    return text
